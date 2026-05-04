@@ -1,6 +1,6 @@
 # Judy Interactive Chat (JIC)
 
-An immersive expansion for *Cyberpunk 2077* that introduces a dynamic messaging system for Judy Alvarez and Male V. This mod focuses on expanding the post-romance interaction (and platonical friendship) with a touch of melancholy inspired by *Blade Runner* and technical vibes from *WarGames*.
+An immersive expansion for *Cyberpunk 2077* that introduces a dynamic messaging system for Judy Alvarez and Male V. This mod focuses on expanding the post-romance interaction (and platonical friendship).
 
 ## 🌟 Overview
 
@@ -21,7 +21,7 @@ To function correctly, this mod requires the following base mods:
 
 - **Dynamic Messaging:** Messages don't just "spam" you. They trigger based on in-game time and relationship milestones.
 - **Relationship Sensing:** The mod detects if `judy_romance_active` is set to `1` and switches the conversation tone accordingly.
-- **Immersive Writing:** Dialogue designed to fit Judy's unique voice, with an optional "Blade Runner" atmospheric touch.
+- **Immersive Writing:** Dialogue designed to fit Judy's unique voice.
 - **English Language Support:** Codebase and in-game text are entirely in English.
 
 ## 📂 Project Structure
