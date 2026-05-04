@@ -1,4 +1,4 @@
-# Judy Interactive Chat (JIC)
+# Keep in Touch with Judy
 
 An immersive expansion for *Cyberpunk 2077* that introduces a dynamic messaging system for Judy Alvarez and Male V. This mod focuses on expanding the post-romance interaction (and platonical friendship).
 
