@@ -1,0 +1,13 @@
+# Lokale Todo
+todos.md
+
+# OS spezifisch
+.DS_Store
+Thumbs.db
+
+# Backup-Files von Editoren
+*.bak
+*.tmp
+
+# VS Code Interne Daten
+.vscode/
