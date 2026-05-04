@@ -1,0 +1,12 @@
+{
+    "Lua.diagnostics.globals": [
+        "registerForEvent",
+        "GetMod",
+        "Game",
+        "print",
+        "Observe",
+        "Override",
+        "Worker",
+        "TweakDB"
+    ]
+}

@@ -1,0 +1,10 @@
+# Judy Keep In Touch Messages
+# Format used by Deceptious Quest Core
+
+- id: judy_platonic_01
+  sender: judy
+  text: "Hey V, just saw something that reminded me of that dive. Hope you're staying safe out there."
+  
+- id: judy_romance_01
+  sender: judy
+  text: "Thinking about you, calabacita. Can't wait to see you again. Stay safe for me, okay?"

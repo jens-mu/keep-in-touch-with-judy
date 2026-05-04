@@ -1,66 +1,42 @@
--- Keep In Touch - Judy Alvarez Romance Extension
--- Main Logic Entry Point
-
 local JIC = {
     settings = require("settings"),
     runtime = {
-        isRomanced = false
+        menuRegistered = false,
+        timer = 0
     }
 }
 
 registerForEvent("onInit", function()
     print("[JIC] Initializing Keep In Touch...")
-
-    -- 1. Register the Mod Settings Menu
-    local nativeSettings = GetMod("nativeSettings")
-    if nativeSettings then
-        JIC.settings.Register()
-        print("[JIC] Native Settings Menu registered.")
-    else
-        print("[JIC] WARNING: Native Settings UI not found. Using default settings.")
-    end
-
-    -- 2. Check for Deceptious Quest Core (DQC)
-    local DQC = GetMod("DeceptiousQuestCore")
-    if not DQC then
-        print("[JIC] CRITICAL ERROR: Deceptious Quest Core is missing! Mod will not function.")
-        return
-    end
-
-    -- 3. Initial Relationship Check
-    JIC.UpdateRelationshipStatus()
-
-    -- 4. Start the Logic Loop
-    JIC.RunMainLoop()
-
-    print("[JIC] Initialization complete.")
 end)
 
--- Function to check Judy's romance status via Game Facts
+registerForEvent("onUpdate", function(deltaTime)
+    if not JIC.runtime.menuRegistered then
+        JIC.runtime.timer = JIC.runtime.timer + deltaTime
+        
+        -- Check every 2 seconds to be safe
+        if JIC.runtime.timer > 2.0 then 
+            JIC.runtime.timer = 0
+            
+            -- Try to find the mods
+            local nativeSettings = GetMod("nativeSettings")
+            local DQC = GetMod("DeceptiousQuestCore")
+
+            if nativeSettings then
+                JIC.settings.Register()
+                JIC.runtime.menuRegistered = true
+                print("[JIC] Native Settings found and registered!")
+            end
+            
+            if DQC then
+                JIC.UpdateRelationshipStatus()
+                -- print("[JIC] Deceptious Quest Core found!") -- Only for debugging
+            end
+        end
+    end
+end)
+
 function JIC.UpdateRelationshipStatus()
-    -- Check the internal game fact for active romance
     local romanceFact = Game.GetQuestsSystem():GetFactStr("judy_romance_active")
-    
-    if romanceFact == 1 then
-        JIC.settings.isRomanced = true
-    else
-        JIC.settings.isRomanced = false
-    end
+    JIC.settings.isRomanced = (romanceFact == 1)
 end
-
-
-
--- The core logic that handles the messaging timing
-function JIC.RunMainLoop()
-    -- ALWAYS check the enabled flag first
-    if not JIC.settings.enabled then
-        print("[JIC] Mod is disabled via settings. Skipping logic.")
-        return
-    end
-
-    -- Logic for scheduling the next message would go here
-    -- Using DQC to handle the persistence and timing
-    print("[JIC] Messaging system is active. Status: " .. (JIC.settings.isRomanced and "Romance" or "Platonic"))
-end
-
-return JIC
