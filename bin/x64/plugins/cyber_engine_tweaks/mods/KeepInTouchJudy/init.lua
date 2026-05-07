@@ -6,6 +6,7 @@ local KIT = {
     runtime = {
         menuRegistered = false,
         gameReady = false,
+        paused = false,
         timer = 0,
         messageTimer = 0,
         nextWaitTime = 0,
@@ -32,14 +33,29 @@ registerForEvent("onInit", function()
         print("[KIT] JournalNotificationQueue erfolgreich initialisiert.")
     end)
 
-    GameSession.OnStart(function() 
-      print("Game has loaded and OnStart has fired")
+    GameSession.OnStart(function()
+        if not KIT.runtime.gameReady then
+            KIT.runtime.gameReady = true
+            KIT.runtime.messageTimer = 0
+            KIT.runtime.nextWaitTime = KIT.settings.GetNextWaitTime()
+            KIT.UpdateRelationshipStatus()
+            print("[KIT] GameSession.OnStart fired - session ready.")
+        end
     end)
-end)
 
-registerForEvent("onSessionStart", function()
-    -- Wir setzen hier noch nicht auf true, sondern warten auf das erste Update im Spiel
-    KIT.runtime.initialDelayPassed = false 
+    GameSession.OnEnd(function()
+        KIT.runtime.gameReady = false
+        KIT.runtime.messageTimer = 0
+        print("[KIT] GameSession.OnEnd fired - session reset.")
+    end)
+
+    GameSession.OnPause(function()
+        KIT.runtime.paused = true
+    end)
+
+    GameSession.OnResume(function()
+        KIT.runtime.paused = false
+    end)
 end)
 
 registerForEvent("onUpdate", function(deltaTime)
@@ -56,22 +72,8 @@ registerForEvent("onUpdate", function(deltaTime)
         end
     end
 
-    -- 2. Der Hard-Lock: Wir warten, bis V wirklich steuerbar ist
-    if not KIT.runtime.gameReady then
-        local player = Game.GetPlayer()
-        -- IsAttached() reicht oft nicht, wir prüfen ob V eine Velocity hat oder das HUD da ist
-        if player and player:IsAttached() then
-            KIT.runtime.timer = KIT.runtime.timer + deltaTime
-            -- Wir warten nach dem "Spawnen" nochmal 5 Sekunden Pufferzeit
-            if KIT.runtime.timer > 5.0 then
-                KIT.StartSession()
-            end
-        end
-    end
-
-    -- 3. Message Loop Logic
-    -- Check: gameReady UND Spiel darf nicht pausiert sein (Laden gilt als Pause)
-    if KIT.settings.enabled and KIT.runtime.gameReady then
+    -- 2. Message Loop Logic
+    if KIT.settings.enabled and KIT.runtime.gameReady and not KIT.runtime.paused then
         KIT.runtime.messageTimer = KIT.runtime.messageTimer + deltaTime
 
         if KIT.runtime.messageTimer >= KIT.runtime.nextWaitTime then
@@ -85,12 +87,6 @@ registerForEvent("onUpdate", function(deltaTime)
 end)
 
 -- Restliche Funktionen (UpdateRelationshipStatus, SendMessage) wie zuvor
-
-registerForEvent("onSessionEnd", function()
-    KIT.runtime.gameReady = false
-    KIT.runtime.messageTimer = 0
-    print("[KIT] Session Ended: Timers reset.")
-end)
 
 function KIT.UpdateRelationshipStatus()
     local questSystem = Game.GetQuestsSystem()

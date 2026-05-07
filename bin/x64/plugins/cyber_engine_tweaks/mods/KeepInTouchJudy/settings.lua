@@ -53,7 +53,8 @@ function ModSettings.GetNextWaitTime()
     else
         window = ModSettings.platonicWindows[ModSettings.platonicIndex]
     end
-    return math.random(window.min, window.max)
+    local waitTime = math.random(window.min, window.max)
+    return waitTime -- * 3600
 end
 
 return ModSettings
