@@ -1,0 +1,329 @@
+# Die Haupt-Konversation
+KeepInTouch.JudyConversation:
+  $type: JournalPhoneConversation
+  id: judy_kit_conversation
+  parent: Characters.judy_alvarez
+  sender: Characters.judy_alvarez
+  contact: Characters.judy_alvarez # Explizite Zuweisung
+  type: "Phone"
+
+# Wir legen 40 Slots für Judy an (für den Verlauf)
+# Ich zeige hier stellvertretend Slot 1 & 40. Du kannst die Liste bis 40 fortsetzen.
+KeepInTouch.MsgSlot_01:
+  $type: JournalPhoneMessage
+  id: msg_slot_01
+  text: "Placeholder"
+  sender: Characters.judy_alvarez
+  parent: KeepInTouch.JudyConversation # DAS FEHLTE
+  type: "Message"
+KeepInTouch.MsgSlot_02:
+  $type: JournalPhoneMessage
+  id: msg_slot_02
+  text: "Placeholder"  
+  sender: Characters.judy_alvarez
+  parent: KeepInTouch.JudyConversation # DAS FEHLTE
+  type: "Message"
+KeepInTouch.MsgSlot_03:
+  $type: JournalPhoneMessage
+  id: msg_slot_03
+  text: "Placeholder"
+  sender: Characters.judy_alvarez
+  parent: KeepInTouch.JudyConversation # DAS FEHLTE
+  type: "Message"
+KeepInTouch.MsgSlot_04:
+  $type: JournalPhoneMessage
+  id: msg_slot_04
+  text: "Placeholder"
+  sender: Characters.judy_alvarez
+  parent: KeepInTouch.JudyConversation # DAS FEHLTE
+  type: "Message"
+KeepInTouch.MsgSlot_05:
+  $type: JournalPhoneMessage
+  id: msg_slot_05
+  text: "Placeholder"
+  sender: Characters.judy_alvarez
+  parent: KeepInTouch.JudyConversation # DAS FEHLTE
+  type: "Message"
+KeepInTouch.MsgSlot_06:
+  $type: JournalPhoneMessage
+  id: msg_slot_06
+  text: "Placeholder"
+  sender: Characters.judy_alvarez
+  parent: KeepInTouch.JudyConversation # DAS FEHLTE
+  type: "Message"
+KeepInTouch.MsgSlot_07:
+  $type: JournalPhoneMessage
+  id: msg_slot_07
+  text: "Placeholder"
+  sender: Characters.judy_alvarez
+  parent: KeepInTouch.JudyConversation # DAS FEHLTE
+  type: "Message"
+KeepInTouch.MsgSlot_08:
+  $type: JournalPhoneMessage
+  id: msg_slot_08
+  text: "Placeholder"
+  sender: Characters.judy_alvarez
+  parent: KeepInTouch.JudyConversation # DAS FEHLTE
+  type: "Message"
+KeepInTouch.MsgSlot_09:
+  $type: JournalPhoneMessage
+  id: msg_slot_09
+  text: "Placeholder"
+  sender: Characters.judy_alvarez
+  parent: KeepInTouch.JudyConversation # DAS FEHLTE
+  type: "Message"
+KeepInTouch.MsgSlot_10:
+  $type: JournalPhoneMessage
+  id: msg_slot_10
+  text: "Placeholder"
+  sender: Characters.judy_alvarez
+  parent: KeepInTouch.JudyConversation # DAS FEHLTE
+  type: "Message"
+KeepInTouch.MsgSlot_11:
+  $type: JournalPhoneMessage
+  id: msg_slot_11
+  text: "Placeholder"
+  sender: Characters.judy_alvarez
+  parent: KeepInTouch.JudyConversation # DAS FEHLTE
+  type: "Message"
+KeepInTouch.MsgSlot_12:
+  $type: JournalPhoneMessage
+  id: msg_slot_12
+  text: "Placeholder"
+  sender: Characters.judy_alvarez
+  parent: KeepInTouch.JudyConversation # DAS FEHLTE
+  type: "Message"
+KeepInTouch.MsgSlot_13:
+  $type: JournalPhoneMessage
+  id: msg_slot_13
+  text: "Placeholder"
+  sender: Characters.judy_alvarez
+  parent: KeepInTouch.JudyConversation # DAS FEHLTE
+  type: "Message"
+KeepInTouch.MsgSlot_14:
+  $type: JournalPhoneMessage
+  id: msg_slot_14
+  text: "Placeholder"
+  sender: Characters.judy_alvarez
+  parent: KeepInTouch.JudyConversation # DAS FEHLTE
+  type: "Message"
+KeepInTouch.MsgSlot_15:
+  $type: JournalPhoneMessage
+  id: msg_slot_15
+  text: "Placeholder"
+  sender: Characters.judy_alvarez
+  parent: KeepInTouch.JudyConversation # DAS FEHLTE
+  type: "Message"
+KeepInTouch.MsgSlot_16:
+  $type: JournalPhoneMessage
+  id: msg_slot_16
+  text: "Placeholder"
+  sender: Characters.judy_alvarez
+  parent: KeepInTouch.JudyConversation # DAS FEHLTE
+  type: "Message"
+KeepInTouch.MsgSlot_17:
+  $type: JournalPhoneMessage
+  id: msg_slot_17
+  text: "Placeholder"
+  sender: Characters.judy_alvarez
+  parent: KeepInTouch.JudyConversation # DAS FEHLTE
+  type: "Message"
+KeepInTouch.MsgSlot_18:
+  $type: JournalPhoneMessage
+  id: msg_slot_18
+  text: "Placeholder"
+  sender: Characters.judy_alvarez
+  parent: KeepInTouch.JudyConversation # DAS FEHLTE
+  type: "Message"
+KeepInTouch.MsgSlot_19:
+  $type: JournalPhoneMessage
+  id: msg_slot_19
+  text: "Placeholder"
+  sender: Characters.judy_alvarez
+  parent: KeepInTouch.JudyConversation # DAS FEHLTE
+  type: "Message"
+KeepInTouch.MsgSlot_20:
+  $type: JournalPhoneMessage
+  id: msg_slot_20
+  text: "Placeholder"
+  sender: Characters.judy_alvarez
+  parent: KeepInTouch.JudyConversation # DAS FEHLTE
+  type: "Message"
+KeepInTouch.MsgSlot_21:
+  $type: JournalPhoneMessage
+  id: msg_slot_21
+  text: "Placeholder"
+  sender: Characters.judy_alvarez
+  parent: KeepInTouch.JudyConversation # DAS FEHLTE
+  type: "Message"
+KeepInTouch.MsgSlot_22:
+  $type: JournalPhoneMessage
+  id: msg_slot_22
+  text: "Placeholder"
+  sender: Characters.judy_alvarez
+  parent: KeepInTouch.JudyConversation # DAS FEHLTE
+  type: "Message"
+KeepInTouch.MsgSlot_23:
+  $type: JournalPhoneMessage
+  id: msg_slot_23
+  text: "Placeholder"
+  sender: Characters.judy_alvarez
+  parent: KeepInTouch.JudyConversation # DAS FEHLTE
+  type: "Message"
+KeepInTouch.MsgSlot_24:
+  $type: JournalPhoneMessage
+  id: msg_slot_24
+  text: "Placeholder"
+  sender: Characters.judy_alvarez
+  parent: KeepInTouch.JudyConversation # DAS FEHLTE
+  type: "Message"
+KeepInTouch.MsgSlot_25:
+  $type: JournalPhoneMessage
+  id: msg_slot_25
+  text: "Placeholder"
+  sender: Characters.judy_alvarez
+  parent: KeepInTouch.JudyConversation # DAS FEHLTE
+  type: "Message"
+KeepInTouch.MsgSlot_26:
+  $type: JournalPhoneMessage
+  id: msg_slot_26
+  text: "Placeholder"
+  sender: Characters.judy_alvarez
+  parent: KeepInTouch.JudyConversation # DAS FEHLTE
+  type: "Message"
+KeepInTouch.MsgSlot_27:
+  $type: JournalPhoneMessage
+  id: msg_slot_27
+  text: "Placeholder"
+  sender: Characters.judy_alvarez
+  parent: KeepInTouch.JudyConversation # DAS FEHLTE
+  type: "Message"
+KeepInTouch.MsgSlot_28:
+  $type: JournalPhoneMessage
+  id: msg_slot_28
+  text: "Placeholder"
+  sender: Characters.judy_alvarez
+  parent: KeepInTouch.JudyConversation # DAS FEHLTE
+  type: "Message"
+KeepInTouch.MsgSlot_29:
+  $type: JournalPhoneMessage
+  id: msg_slot_29
+  text: "Placeholder"
+  sender: Characters.judy_alvarez
+  parent: KeepInTouch.JudyConversation # DAS FEHLTE
+  type: "Message"
+KeepInTouch.MsgSlot_30:
+  $type: JournalPhoneMessage
+  id: msg_slot_30
+  text: "Placeholder"
+  sender: Characters.judy_alvarez
+  parent: KeepInTouch.JudyConversation # DAS FEHLTE
+  type: "Message"
+KeepInTouch.MsgSlot_31:
+  $type: JournalPhoneMessage
+  id: msg_slot_31
+  text: "Placeholder"
+  sender: Characters.judy_alvarez
+  parent: KeepInTouch.JudyConversation # DAS FEHLTE
+  type: "Message"
+KeepInTouch.MsgSlot_32:
+  $type: JournalPhoneMessage
+  id: msg_slot_32
+  text: "Placeholder"
+  sender: Characters.judy_alvarez
+  parent: KeepInTouch.JudyConversation # DAS FEHLTE
+  type: "Message"
+KeepInTouch.MsgSlot_33:
+  $type: JournalPhoneMessage
+  id: msg_slot_33
+  text: "Placeholder"
+  sender: Characters.judy_alvarez
+  parent: KeepInTouch.JudyConversation # DAS FEHLTE
+  type: "Message"
+KeepInTouch.MsgSlot_34:
+  $type: JournalPhoneMessage
+  id: msg_slot_34
+  text: "Placeholder"
+  sender: Characters.judy_alvarez
+  parent: KeepInTouch.JudyConversation # DAS FEHLTE
+  type: "Message"
+KeepInTouch.MsgSlot_35:
+  $type: JournalPhoneMessage
+  id: msg_slot_35
+  text: "Placeholder"
+  sender: Characters.judy_alvarez
+  parent: KeepInTouch.JudyConversation # DAS FEHLTE
+  type: "Message"
+KeepInTouch.MsgSlot_36:
+  $type: JournalPhoneMessage
+  id: msg_slot_36
+  text: "Placeholder"
+  sender: Characters.judy_alvarez
+  parent: KeepInTouch.JudyConversation # DAS FEHLTE
+  type: "Message"
+KeepInTouch.MsgSlot_37:
+  $type: JournalPhoneMessage
+  id: msg_slot_37
+  text: "Placeholder"
+  sender: Characters.judy_alvarez
+  parent: KeepInTouch.JudyConversation # DAS FEHLTE
+  type: "Message"
+KeepInTouch.MsgSlot_38:
+  $type: JournalPhoneMessage
+  id: msg_slot_38
+  text: "Placeholder"
+  sender: Characters.judy_alvarez
+  parent: KeepInTouch.JudyConversation # DAS FEHLTE
+  type: "Message"
+KeepInTouch.MsgSlot_39:
+  $type: JournalPhoneMessage
+  id: msg_slot_39
+  text: "Placeholder"
+  sender: Characters.judy_alvarez
+  parent: KeepInTouch.JudyConversation # DAS FEHLTE
+  type: "Message"
+KeepInTouch.MsgSlot_40:
+  $type: JournalPhoneMessage
+  id: msg_slot_40
+  text: "Placeholder"
+  sender: Characters.judy_alvarez
+  parent: KeepInTouch.JudyConversation # DAS FEHLTE
+  type: "Message"
+
+# Slots für Vs Antworten (Choices)
+KeepInTouch.VChoice_01:
+  $type: JournalPhoneMessage
+  text: "Placeholder V 1"
+  sender: Characters.player_puppet
+  parent: KeepInTouch.JudyConversation
+  type: "Message" # Bleibt "Message", aber wir steuern die Sichtbarkeit via Lua
+KeepInTouch.VChoice_02:
+  $type: JournalPhoneMessage
+  text: "Placeholder V 2"
+  sender: Characters.player_puppet
+  parent: KeepInTouch.JudyConversation
+  type: "Message" # Bleibt "Message", aber wir steuern die Sichtbarkeit via Lua
+KeepInTouch.VChoice_03:
+  $type: JournalPhoneMessage
+  text: "Placeholder V 3"
+  sender: Characters.player_puppet
+  parent: KeepInTouch.JudyConversation
+  type: "Message" # Bleibt "Message", aber wir steuern die Sichtbarkeit via Lua
+KeepInTouch.VChoice_04:
+  $type: JournalPhoneMessage
+  text: "Placeholder V 4"
+  sender: Characters.player_puppet
+  parent: KeepInTouch.JudyConversation
+  type: "Message" # Bleibt "Message", aber wir steuern die Sichtbarkeit via Lua
+KeepInTouch.VChoice_05:
+  $type: JournalPhoneMessage
+  text: "Placeholder V 5"
+  sender: Characters.player_puppet
+  parent: KeepInTouch.JudyConversation
+  type: "Message" # Bleibt "Message", aber wir steuern die Sichtbarkeit via Lua
+KeepInTouch.VChoice_06:
+  $type: JournalPhoneMessage
+  text: "Placeholder V 6"
+  sender: Characters.player_puppet
+  parent: KeepInTouch.JudyConversation
+  type: "Message" # Bleibt "Message", aber wir steuern die Sichtbarkeit via Lua
