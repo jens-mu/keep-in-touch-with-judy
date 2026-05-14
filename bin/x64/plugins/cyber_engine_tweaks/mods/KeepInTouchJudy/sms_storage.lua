@@ -7,14 +7,22 @@ local storage = {
 function storage.Init()
     print('[KIT] Storage: loading used message IDs from ' .. storage.path)
     local file = io.open(storage.path, 'r')
-    if file then
-        local content = file:read('*a')
-        storage.usedIds = json.decode(content) or {}
-        file:close()
+    if not file then
+        storage.usedIds = {}
+        print('[KIT] Storage: no existing history file found. Starting fresh.')
+        return
+    end
+
+    local content = file:read('*a')
+    file:close()
+
+    local ok, result = pcall(json.decode, content)
+    if ok and type(result) == 'table' then
+        storage.usedIds = result
         print('[KIT] Storage: loaded ' .. tostring(#storage.usedIds) .. ' used IDs.')
     else
         storage.usedIds = {}
-        print('[KIT] Storage: no existing history file found. Starting fresh.')
+        print('[KIT] Storage: corrupt or invalid JSON detected, resetting history.')
     end
 end
 

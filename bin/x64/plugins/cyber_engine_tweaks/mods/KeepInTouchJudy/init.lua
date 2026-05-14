@@ -125,13 +125,11 @@ function KIT.SendMessage()
     journalSet('KeepInTouch.JudyConversation', 'gameJournalPhoneConversation')
     journalSet(msgPath, 'gameJournalPhoneMessage')
 
-    -- Verify TweakXL actually registered the entries (ChangeEntryState silently does nothing on missing entries)
-    ---@diagnostic disable-next-line: missing-parameter
-    local convEntry = journalManager:GetEntryByString('KeepInTouch.JudyConversation')
-    ---@diagnostic disable-next-line: missing-parameter
-    local msgEntry = journalManager:GetEntryByString(msgPath)
-    KIT.Log('TweakXL check - JudyConversation: ' .. (convEntry and 'FOUND' or 'NOT FOUND - TweakXL may have failed'))
-    KIT.Log('TweakXL check - ' .. msgPath .. ': ' .. (msgEntry and 'FOUND' or 'NOT FOUND - TweakXL may have failed'))
+    -- Verify TweakXL actually registered the records (TweakDB is the ground truth here)
+    local convId = TweakDB:GetFlat('KeepInTouch.JudyConversation.id')
+    local msgId = TweakDB:GetFlat(msgPath .. '.id')
+    KIT.Log('TweakXL record - JudyConversation.id: ' .. tostring(convId))
+    KIT.Log('TweakXL record - ' .. msgPath .. '.id: ' .. tostring(msgId))
     KIT.Log('Journal sync complete.')
 
     -- 3. HUD Popup
@@ -142,7 +140,7 @@ function KIT.SendMessage()
         local openAction = nil
         pcall(function()
             local action = OpenJournalAction.new()
-            local entry = journalManager:GetEntryByString(msgPath)
+            local entry = journalManager:GetEntryByString(msgPath, 'gameJournalPhoneMessage')
             if entry then
                 action.journalEntry = entry
                 KIT.Log('Journal entry linked to open action.')
@@ -204,6 +202,16 @@ registerForEvent('onInit', function()
         end
     end
     KIT.Log('DEBUG: 40 TweakDB Slots registered.')
+
+    -- Diagnose: verify TweakXL loaded our YAML (r6/tweaks/KeepInTouch.yaml must be deployed)
+    -- Note: $type is not a TweakDB flat, only record properties are accessible via GetFlat
+    local kitConvId = TweakDB:GetFlat('KeepInTouch.JudyConversation.id')
+    local kitSlotId = TweakDB:GetFlat('KeepInTouch.MsgSlot_01.id')
+    KIT.Log('TweakXL deploy check - JudyConversation.id: ' .. tostring(kitConvId))
+    KIT.Log('TweakXL deploy check - MsgSlot_01.id: ' .. tostring(kitSlotId))
+    if not kitConvId then
+        KIT.Log('WARNING: r6/tweaks/KeepInTouch.yaml not loaded by TweakXL. Phone journal will not work.')
+    end
 
     -- 2. Popup Observer (so the HUD event arrives)
     KIT.Log('Step 2: Setting up HUD Queue Observer.')
