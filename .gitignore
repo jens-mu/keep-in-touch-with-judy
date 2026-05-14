@@ -11,3 +11,6 @@ Thumbs.db
 
 # VS Code Interne Daten
 .vscode/
+Claude.md
+.prettierrc.json
+.stylua.toml
