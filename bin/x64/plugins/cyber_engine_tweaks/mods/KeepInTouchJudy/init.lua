@@ -110,45 +110,56 @@ function KIT.SendMessage()
     -- 2. Journal Sync (The 'wake-up' sequence for the messenger)
     -- We activate the chain from top to bottom
     KIT.Log('Step 2: Syncing journal entries to activate messenger.')
-    journalManager:ChangeEntryState(
-        'Characters.judy_alvarez',
-        'gameJournalContact',
-        gameJournalEntryState.Active,
-        gameJournalNotifyOption.Quiet
-    )
-    journalManager:ChangeEntryState(
-        'KeepInTouch.JudyConversation',
-        'JournalPhoneConversation',
-        gameJournalEntryState.Active,
-        gameJournalNotifyOption.Quiet
-    )
-    journalManager:ChangeEntryState(
-        msgPath,
-        'gameJournalPhoneMessage',
-        gameJournalEntryState.Active,
-        gameJournalNotifyOption.Quiet
-    )
-    KIT.Log('Journal entries activated for message display.')
+    local function journalSet(id, typeName)
+        local ok, err = pcall(function()
+            journalManager:ChangeEntryState(id, typeName, gameJournalEntryState.Active, gameJournalNotifyOption.Notify)
+        end)
+        if ok then
+            KIT.Log('Journal OK: ' .. id .. ' (' .. typeName .. ')')
+        else
+            KIT.Log('Journal FAIL: ' .. id .. ' (' .. typeName .. ') -> ' .. tostring(err))
+        end
+    end
+
+    journalSet('Characters.judy_alvarez', 'gameJournalContact')
+    journalSet('KeepInTouch.JudyConversation', 'gameJournalPhoneConversation')
+    journalSet(msgPath, 'gameJournalPhoneMessage')
+
+    -- Verify TweakXL actually registered the entries (ChangeEntryState silently does nothing on missing entries)
+    ---@diagnostic disable-next-line: missing-parameter
+    local convEntry = journalManager:GetEntryByString('KeepInTouch.JudyConversation')
+    ---@diagnostic disable-next-line: missing-parameter
+    local msgEntry = journalManager:GetEntryByString(msgPath)
+    KIT.Log('TweakXL check - JudyConversation: ' .. (convEntry and 'FOUND' or 'NOT FOUND - TweakXL may have failed'))
+    KIT.Log('TweakXL check - ' .. msgPath .. ': ' .. (msgEntry and 'FOUND' or 'NOT FOUND - TweakXL may have failed'))
+    KIT.Log('Journal sync complete.')
 
     -- 3. HUD Popup
     if KIT.runtime.journalNotificationQueue then
         KIT.Log('Step 3: Creating HUD popup notification.')
-        local ok, err = pcall(function()
-            local openAction = OpenJournalAction.new()
 
-            -- We retrieve the engine object for the slot
+        -- Optional: try to link journal entry for tap-to-open. Fails gracefully if class unavailable.
+        local openAction = nil
+        pcall(function()
+            local action = OpenJournalAction.new()
             local entry = journalManager:GetEntryByString(msgPath)
             if entry then
-                openAction.journalEntry = entry
+                action.journalEntry = entry
                 KIT.Log('Journal entry linked to open action.')
-            else
-                KIT.Log('Warning: Journal entry not found for ' .. msgPath)
             end
+            openAction = action
+        end)
+        if not openAction then
+            KIT.Log('Warning: OpenJournalAction unavailable. Popup will show without journal link.')
+        end
 
+        local ok, err = pcall(function()
             local userData = PhoneMessageNotificationViewData.new()
             userData.title = 'Judy Alvarez'
             userData.SMSText = messageData.text
-            userData.action = openAction
+            if openAction then
+                userData.action = openAction
+            end
             userData.animation = CName.new('notification_phone_MSG')
             userData.soundEvent = CName.new('PhoneSmsPopup')
             userData.soundAction = CName.new('OnOpen')
@@ -205,8 +216,11 @@ registerForEvent('onInit', function()
 
     -- 3. Initialize modules
     KIT.Log('Step 3: Initializing modules.')
-    KIT.sms_storage.Init()
-    KIT.settings.Register()
+    local ok, err = pcall(KIT.sms_storage.Init)
+    if not ok then
+        KIT.Log('ERROR in sms_storage.Init: ' .. tostring(err))
+    end
+    -- settings.Register() is intentionally deferred to onUpdate (nativeSettings may not be ready at onInit)
     KIT.runtime.nextWaitTime = KIT.settings.GetNextWaitTime()
     KIT.Log('Initial next wait time set to ' .. tostring(KIT.runtime.nextWaitTime) .. ' seconds.')
 

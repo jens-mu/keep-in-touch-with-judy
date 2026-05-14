@@ -1,27 +1,31 @@
 -- sms_storage.lua
 local storage = {
-    path = "data/used_messages.json",
-    usedIds = {}
-end
+    path = 'used_messages.json',
+    usedIds = {},
+}
 
 function storage.Init()
-    print("[KIT] Storage: loading used message IDs from " .. storage.path)
-    local file = io.open(storage.path, "r")
+    print('[KIT] Storage: loading used message IDs from ' .. storage.path)
+    local file = io.open(storage.path, 'r')
     if file then
-        local content = file:read("*a")
+        local content = file:read('*a')
         storage.usedIds = json.decode(content) or {}
         file:close()
-        print("[KIT] Storage: loaded " .. tostring(#storage.usedIds) .. " used IDs.")
+        print('[KIT] Storage: loaded ' .. tostring(#storage.usedIds) .. ' used IDs.')
     else
         storage.usedIds = {}
-        print("[KIT] Storage: no existing history file found. Starting fresh.")
+        print('[KIT] Storage: no existing history file found. Starting fresh.')
     end
 end
 
 function storage.SaveUsedId(id)
     table.insert(storage.usedIds, id)
-    print("[KIT] Storage: saving used ID = " .. tostring(id) .. " (total used=" .. tostring(#storage.usedIds) .. ")")
-    local file = io.open(storage.path, "w")
+    print('[KIT] Storage: saving used ID = ' .. tostring(id) .. ' (total used=' .. tostring(#storage.usedIds) .. ')')
+    local file = io.open(storage.path, 'w')
+    if not file then
+        print('[KIT] Storage: ERROR - could not open ' .. storage.path .. ' for writing.')
+        return
+    end
     file:write(json.encode(storage.usedIds))
     file:close()
 end
@@ -29,7 +33,7 @@ end
 function storage.Clear()
     storage.usedIds = {}
     os.remove(storage.path)
-    print("[KIT] Storage: cleared used message history.")
+    print('[KIT] Storage: cleared used message history.')
 end
 
-return storage  
+return storage
