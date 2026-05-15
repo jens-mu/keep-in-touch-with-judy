@@ -1,0 +1,9 @@
+quest:
+  phases:
+    - path: mod\kit\judy_kit_bootstrap.questphase
+      parent: cyberpunk2077.quest
+journal:
+  - base\journal\judy_kit_messages.journal
+localization:
+  onscreens:
+    en-us: base\localization\en-us\onscreens\kit_onscreens.json

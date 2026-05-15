@@ -8,9 +8,7 @@ local KIT = {
     sms_storage = require('sms_storage'),
     runtime = {
         gameReady = false,
-        currentSlotIndex = 1,
         menuRegistered = false,
-        maxSlots = 40,
         messageTimer = 0,
         timer = 0,
         nextWaitTime = 0,
@@ -33,7 +31,6 @@ function KIT.IsJudyReady()
     end
 
     -- q105 is the quest "Disasterpiece" (Evelyn rescue)
-    -- If this fact is >= 1, the quest is complete.
     local evelynRescued = questSystem:GetFactStr('q105_done')
     KIT.Log('Quest check q105_done = ' .. tostring(evelynRescued))
 
@@ -59,15 +56,8 @@ function KIT.UpdateRelationshipStatus()
 end
 
 function KIT.SendMessage()
-    KIT.Log('DEBUG: --- SendMessage Sequence Started ---')
-    KIT.Log(
-        'SendMessage state: enabled='
-            .. tostring(KIT.settings.enabled)
-            .. ', gameReady='
-            .. tostring(KIT.runtime.gameReady)
-            .. ', paused='
-            .. tostring(KIT.runtime.paused)
-    )
+    KIT.Log('--- SendMessage Sequence Started ---')
+    KIT.Log('state: enabled=' .. tostring(KIT.settings.enabled) .. ', gameReady=' .. tostring(KIT.runtime.gameReady))
 
     if not KIT.IsJudyReady() then
         KIT.Log('Aborted: Evelyn not yet rescued.')
@@ -93,23 +83,14 @@ function KIT.SendMessage()
     end
 
     KIT.Log(
-        'Selected message ID: ' .. tostring(messageData.id) .. ' (romance: ' .. tostring(KIT.runtime.isRomanced) .. ')'
+        'Selected message: ' .. tostring(messageData.id) .. ' (romance: ' .. tostring(KIT.runtime.isRomanced) .. ')'
     )
 
     local journalManager = Game.GetJournalManager()
-    local slotIndex = KIT.runtime.currentSlotIndex or 1
-    local msgPath = 'KeepInTouch.MsgSlot_' .. string.format('%02d', slotIndex)
-    KIT.Log('Using slot index: ' .. tostring(slotIndex) .. ', path: ' .. msgPath)
 
-    -- 1. TweakDB Update (write content to the slot)
-    KIT.Log('Step 1: Updating TweakDB with message text.')
-    TweakDB:SetFlat(msgPath .. '.text', messageData.text)
-    TweakDB:Update(msgPath)
-    KIT.Log('TweakDB updated for ' .. msgPath)
-
-    -- 2. Journal Sync (The 'wake-up' sequence for the messenger)
-    -- We activate the chain from top to bottom
-    KIT.Log('Step 2: Syncing journal entries to activate messenger.')
+    -- Activate the journal entry chain: Contact → Conversation → Message
+    -- The archive (loaded by ArchiveXL) provides the actual entries.
+    -- ChangeEntryState returns "OK" even for missing entries, so we log diagnostic info.
     local function journalSet(id, typeName)
         local ok, err = pcall(function()
             journalManager:ChangeEntryState(id, typeName, gameJournalEntryState.Active, gameJournalNotifyOption.Notify)
@@ -121,28 +102,36 @@ function KIT.SendMessage()
         end
     end
 
-    journalSet('Characters.judy_alvarez', 'gameJournalContact')
-    journalSet('KeepInTouch.JudyConversation', 'gameJournalPhoneConversation')
-    journalSet(msgPath, 'gameJournalPhoneMessage')
+    -- ChangeEntryState uses entry IDs (not paths)
+    journalSet('judy_kit', 'gameJournalContact')
+    journalSet('judy_kit_conversation', 'gameJournalPhoneConversation')
+    journalSet(messageData.id, 'gameJournalPhoneMessage')
 
-    -- Verify TweakXL actually registered the records (TweakDB is the ground truth here)
-    local convId = TweakDB:GetFlat('KeepInTouch.JudyConversation.id')
-    local msgId = TweakDB:GetFlat(msgPath .. '.id')
-    KIT.Log('TweakXL record - JudyConversation.id: ' .. tostring(convId))
-    KIT.Log('TweakXL record - ' .. msgPath .. '.id: ' .. tostring(msgId))
-    KIT.Log('Journal sync complete.')
+    -- Sanity checks: GetEntryByString also uses entry IDs
+    local function tryLookup(id, t)
+        local result = nil
+        pcall(function()
+            result = journalManager:GetEntryByString(id, t)
+        end)
+        KIT.Log('Lookup [' .. id .. '|' .. t .. ']: ' .. (result ~= nil and 'FOUND' or 'NIL'))
+        return result
+    end
+    tryLookup('judy', 'gameJournalContact')
+    tryLookup('judy_kit', 'gameJournalContact')
+    tryLookup('judy_kit_conversation', 'gameJournalPhoneConversation')
+    tryLookup('judy_kit_init', 'gameJournalPhoneMessage')
 
-    -- 3. HUD Popup
+    local verifyMsg = tryLookup(messageData.id, 'gameJournalPhoneMessage')
+
+    -- HUD Popup
     if KIT.runtime.journalNotificationQueue then
-        KIT.Log('Step 3: Creating HUD popup notification.')
+        KIT.Log('Creating HUD popup notification.')
 
-        -- Optional: try to link journal entry for tap-to-open. Fails gracefully if class unavailable.
         local openAction = nil
         pcall(function()
             local action = OpenJournalAction.new()
-            local entry = journalManager:GetEntryByString(msgPath, 'gameJournalPhoneMessage')
-            if entry then
-                action.journalEntry = entry
+            if verifyMsg then
+                action.journalEntry = verifyMsg
                 KIT.Log('Journal entry linked to open action.')
             end
             openAction = action
@@ -177,69 +166,40 @@ function KIT.SendMessage()
         KIT.Log('Warning: HUD Queue not ready. Skipping popup.')
     end
 
-    -- 4. Save progress
-    KIT.Log('Step 4: Saving message as used and updating slot index.')
     KIT.sms_storage.SaveUsedId(messageData.id)
-    KIT.runtime.currentSlotIndex = (slotIndex % 40) + 1
-    KIT.Log('Next slot index: ' .. tostring(KIT.runtime.currentSlotIndex))
-
-    KIT.Log('--- SendMessage Sequence Finished: ' .. messageData.id .. ' ---')
+    KIT.Log('--- SendMessage Finished: ' .. messageData.id .. ' ---')
 end
 
 registerForEvent('onInit', function()
-    KIT.Log('DEBUG: onInit Start -------------------------------------------')
+    KIT.Log('onInit Start -------------------------------------------')
 
-    -- 1. Initialize TweakDB Slots (IMPORTANT!)
-    -- This ensures the engine knows the IDs before we use them
-    KIT.Log('Step 1: Initializing 40 TweakDB slots.')
-    for i = 1, 40 do
-        local slotID = string.format('KeepInTouch.MsgSlot_%02d', i)
-        -- We set an empty string so the slot technically exists
-        TweakDB:SetFlat(slotID .. '.text', '')
-        TweakDB:Update(slotID)
-        if i % 10 == 0 then
-            KIT.Log('Initialized slots up to ' .. tostring(i))
-        end
-    end
-    KIT.Log('DEBUG: 40 TweakDB Slots registered.')
-
-    -- Diagnose: verify TweakXL loaded our YAML (r6/tweaks/KeepInTouch.yaml must be deployed)
-    -- Note: $type is not a TweakDB flat, only record properties are accessible via GetFlat
-    local kitConvId = TweakDB:GetFlat('KeepInTouch.JudyConversation.id')
-    local kitSlotId = TweakDB:GetFlat('KeepInTouch.MsgSlot_01.id')
-    KIT.Log('TweakXL deploy check - JudyConversation.id: ' .. tostring(kitConvId))
-    KIT.Log('TweakXL deploy check - MsgSlot_01.id: ' .. tostring(kitSlotId))
-    if not kitConvId then
-        KIT.Log('WARNING: r6/tweaks/KeepInTouch.yaml not loaded by TweakXL. Phone journal will not work.')
-    end
-
-    -- 2. Popup Observer (so the HUD event arrives)
-    KIT.Log('Step 2: Setting up HUD Queue Observer.')
-    Observe('JournalNotificationQueue', 'OnMenuUpdate', function(self)
+    -- HUD Queue Observer
+    KIT.Log('Setting up HUD Queue Observer.')
+    Observe('gameuiGenericNotificationGameController', 'OnMenuUpdate', function(self)
         if not KIT.runtime.journalNotificationQueue then
             KIT.runtime.journalNotificationQueue = self
-            KIT.Log('DEBUG: HUD Queue Observer linked.')
+            KIT.Log('HUD Queue Observer linked.')
         end
     end)
 
-    -- 3. Initialize modules
-    KIT.Log('Step 3: Initializing modules.')
+    -- Initialize modules
+    KIT.Log('Initializing modules.')
     local ok, err = pcall(KIT.sms_storage.Init)
     if not ok then
         KIT.Log('ERROR in sms_storage.Init: ' .. tostring(err))
     end
-    -- settings.Register() is intentionally deferred to onUpdate (nativeSettings may not be ready at onInit)
+    -- settings.Register() deferred to onUpdate (nativeSettings may not be ready at onInit)
     KIT.runtime.nextWaitTime = KIT.settings.GetNextWaitTime()
-    KIT.Log('Initial next wait time set to ' .. tostring(KIT.runtime.nextWaitTime) .. ' seconds.')
+    KIT.Log('Initial next wait time: ' .. tostring(KIT.runtime.nextWaitTime) .. ' seconds.')
 
-    -- 4. Game Session Hooks
-    KIT.Log('Step 4: Setting up Game Session Hooks.')
+    -- Game Session Hooks
+    KIT.Log('Setting up Game Session Hooks.')
     GameSession.OnStart(function()
-        KIT.Log('DEBUG: Session Start - Setting up Judy...')
+        KIT.Log('Session Start - game ready.')
         KIT.runtime.gameReady = true
         KIT.runtime.messageTimer = 0
         KIT.UpdateRelationshipStatus()
-        KIT.Log('Game session ready. isRomanced: ' .. tostring(KIT.runtime.isRomanced))
+        KIT.Log('isRomanced: ' .. tostring(KIT.runtime.isRomanced))
     end)
 
     GameSession.OnEnd(function()
@@ -247,11 +207,11 @@ registerForEvent('onInit', function()
         KIT.Log('GameSession ended. gameReady=false')
     end)
 
-    KIT.Log('DEBUG: onInit Complete -------------------------------------------')
+    KIT.Log('onInit Complete -------------------------------------------')
 end)
 
 registerForEvent('onUpdate', function(deltaTime)
-    -- Settings registration delay
+    -- Deferred settings registration
     if not KIT.runtime.menuRegistered then
         KIT.runtime.timer = KIT.runtime.timer + deltaTime
         if KIT.runtime.timer > 2.0 then
@@ -259,9 +219,9 @@ registerForEvent('onUpdate', function(deltaTime)
             if GetMod('nativeSettings') then
                 KIT.settings.Register()
                 KIT.runtime.menuRegistered = true
-                KIT.Log('Native settings registered successfully.')
+                KIT.Log('Native settings registered.')
             else
-                KIT.Log('Waiting for nativeSettings mod to become available.')
+                KIT.Log('Waiting for nativeSettings...')
             end
         end
     end
@@ -273,20 +233,8 @@ registerForEvent('onUpdate', function(deltaTime)
         if KIT.runtime.messageTimer >= KIT.runtime.nextWaitTime then
             KIT.runtime.messageTimer = 0
             KIT.runtime.nextWaitTime = KIT.settings.GetNextWaitTime()
-            KIT.Log('Message timer expired. Next wait time = ' .. tostring(KIT.runtime.nextWaitTime) .. ' seconds.')
+            KIT.Log('Timer expired. Next wait: ' .. tostring(KIT.runtime.nextWaitTime) .. 's')
             KIT.SendMessage()
-        end
-    else
-        -- Optional: Log why not sending messages, but only occasionally to avoid spam
-        if math.floor(KIT.runtime.messageTimer) % 60 == 0 and KIT.runtime.messageTimer > 0 then
-            KIT.Log(
-                'Message sending paused. enabled='
-                    .. tostring(KIT.settings.enabled)
-                    .. ', gameReady='
-                    .. tostring(KIT.runtime.gameReady)
-                    .. ', paused='
-                    .. tostring(KIT.runtime.paused)
-            )
         end
     end
 end)

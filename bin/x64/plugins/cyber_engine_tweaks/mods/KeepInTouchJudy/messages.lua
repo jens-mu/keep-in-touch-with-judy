@@ -6,11 +6,11 @@ messages.data = {
     platonic = {
         {
             id = 'judy_plat_01',
-            text = "Hey V, hab gerade ein paar alte Braindances sortiert. Echt schräg, was die Leute früher für 'Unterhaltung' hielten... Hoffe, bei dir ist es weniger stressig als in Watson gerade.",
+            text = "Hey V. Been sorting through some old braindances. Wild how people used to call that entertainment. Hope things are less hectic on your end than in Watson right now.",
         },
         {
             id = 'judy_plat_02',
-            text = "V, danke nochmal für alles neulich. Ohne dich wäre das im Apartment ganz anders ausgegangen. Falls du mal in der Nähe bist und 'ne Pause von der ganzen Night-City-Scheiße brauchst – Kaffee steht bereit.",
+            text = "Still thinking about what went down back there. Wouldn't have turned out the same without you. If you're ever around and need a break from all the Night City bullshit - coffee's on me.",
         },
     },
 
@@ -18,11 +18,11 @@ messages.data = {
     romance = {
         {
             id = 'judy_rom_01',
-            text = 'Hab gerade an unser Tauchen gedacht... die Stille da unten. Manchmal wünschte ich, wir könnten einfach dort bleiben, weit weg vom Lärm der Stadt. Pass auf dich auf, okay? Ich brauch dich hier oben noch.',
+            text = "Been thinking about that dive we did. The quiet down there. Sometimes I wish we could just stay. Away from all this noise. Take care of yourself, okay? I need you up here.",
         },
         {
             id = 'judy_rom_02',
-            text = 'V? Ich schau gerade aus dem Fenster und die Lichter der Stadt sehen heute fast... friedlich aus. Aber irgendwas fehlt. Oder eher jemand. Melde dich mal, wenn du zwischen deinen ganzen Aufträgen Zeit zum Atmen hast.',
+            text = "V? Looking out the window right now. City lights almost look peaceful tonight. Almost. But something's missing. Someone. Check in when you get a chance to breathe between all those gigs.",
         },
     },
 }
